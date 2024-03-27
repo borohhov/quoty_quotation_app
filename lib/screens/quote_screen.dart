@@ -15,11 +15,11 @@ class QuoteScreen extends StatefulWidget {
 }
 
 class QuoteScreenState extends State<QuoteScreen> {
-  late Quote quote;
+  late Future<Quote> futureQuote;
 
   @override
   void initState() {
-    quote = getQuote();
+    futureQuote = getQuote();
     super.initState();
   }
 
@@ -34,7 +34,7 @@ class QuoteScreenState extends State<QuoteScreen> {
         child: Icon(Icons.refresh),
         onPressed: () {
           setState(() {
-            quote = getQuote();
+            futureQuote = getQuote();
           });
         },
       ),
@@ -45,25 +45,40 @@ class QuoteScreenState extends State<QuoteScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Padding(
                 padding: const EdgeInsets.only(top: 80.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      quote.quote,
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                    Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: Text('—${quote.author}',
-                            style: TextStyle(fontSize: 28),
+                child: FutureBuilder<Quote>(
+                  future: futureQuote,
+                  builder: (context, AsyncSnapshot<Quote> snapshot) {
+                    if(snapshot.connectionState == ConnectionState.waiting) {
+                      return Text('Loading...');
+                    }
+                    else if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                      Quote quote = snapshot.data!;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            quote.quote,
+                            style: TextStyle(
+                              fontSize: 36,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
-                        ))
-                  ],
+                          Align(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: Text('—${quote.author}',
+                                  style: TextStyle(fontSize: 28),
+                                ),
+                              ))
+                        ],
+                      );
+                    }
+                    else {
+                      return Text('Couldn\'t get a quote...');
+                    }
+                  },
+
                 ),
               ),
             ),
