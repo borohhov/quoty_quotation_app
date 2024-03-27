@@ -33,14 +33,27 @@ List<Quote> quotes = [
 ];
 const String API_NINJAS_KEY = 'TSSofOsiVTK2O9ND6r2SyQ==KpSkV5JkLRwt2jiu';
 
-Future<Quote> getQuote() async {
+Future<Quote> getQuote({String category = ''}) async {
+  String uri = 'https://api.api-ninjas.com/v1/quotes';
+  if(category.isNotEmpty) {
+    uri = '$uri?category=$category';
+  }
+
   http.Request request =
-      http.Request('get', Uri.parse('https://api.api-ninjas.com/v1/quotes'));
+      http.Request('get', Uri.parse(uri));
   request.headers.addAll({"X-Api-Key": "${API_NINJAS_KEY}"});
+
   http.StreamedResponse streamedResponse = await request.send();
   http.Response response = await http.Response.fromStream(streamedResponse);
+
   if (response.statusCode == 200) {
-    Map<String, dynamic> json = jsonDecode(response.body)[0];
+    Map<String, dynamic> json = Map();
+    try {
+      json = jsonDecode(response.body)[0];
+    }
+    catch(e) {
+      return Quote('Looks like the category is incorrect', 'Quoty');
+  }
     Quote quote = Quote(json['quote'], json['author']);
     return quote;
   } else {

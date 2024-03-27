@@ -16,6 +16,7 @@ class QuoteScreen extends StatefulWidget {
 
 class QuoteScreenState extends State<QuoteScreen> {
   late Future<Quote> futureQuote;
+  TextEditingController textEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -23,20 +24,22 @@ class QuoteScreenState extends State<QuoteScreen> {
     super.initState();
   }
 
+  void getNewQuote() {
+    setState(() {
+      futureQuote = getQuote(category: textEditingController.value.text);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           title: Center(
-        child: Text('Quoty'),
-      )),
+            child: Text('Quoty'),
+          )),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.refresh),
-        onPressed: () {
-          setState(() {
-            futureQuote = getQuote();
-          });
-        },
+        onPressed: getNewQuote
       ),
       body: Stack(
         children: [
@@ -48,10 +51,11 @@ class QuoteScreenState extends State<QuoteScreen> {
                 child: FutureBuilder<Quote>(
                   future: futureQuote,
                   builder: (context, AsyncSnapshot<Quote> snapshot) {
-                    if(snapshot.connectionState == ConnectionState.waiting) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return Text('Loading...');
                     }
-                    else if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                    else if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
                       Quote quote = snapshot.data!;
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,12 +92,15 @@ class QuoteScreenState extends State<QuoteScreen> {
             child: Container(
               color: Colors.white,
               child: TextField(
+                controller: textEditingController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.search),
+                  suffixIcon: GestureDetector(
+                      onTap: getNewQuote,
+                      child: Icon(Icons.search)),
                   // Use OutlineInputBorder for a box-like appearance
                   hintText:
-                  'Enter something', // Optional: Adds a label above the TextField
+                  'Enter a category', // Optional: Adds a label above the TextField
                 ),
               ),
             ),

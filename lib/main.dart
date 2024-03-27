@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quoty/controllers/quote_controller.dart';
 import 'package:quoty/screens/quote_screen.dart';
 
 void main() {
