@@ -17,18 +17,29 @@ class HistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Quote> quotes = Provider.of<QuoteProvider>(context, listen: false).getAllQuotes();
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
           child: Padding(
         padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: quotes.map((q) => Card(child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: SmallQuoteWidget(quote: q,),
-          ))).toList(),
+        child: FutureBuilder(
+          future: Provider.of<QuoteProvider>(context, listen: false).getAllQuotes(),
+          builder: (context, snapshot) {
+            if(snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: Text('Loading...'),);
+            }
+            else if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: snapshot.data!.map((q) =>
+                    Card(child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: SmallQuoteWidget(quote: q,),
+                    ))).toList(),
+              );
+            }
+            return const Center(child: Text('Error.'),);
+          }
         ),
       )),
     );
