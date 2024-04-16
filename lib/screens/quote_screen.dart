@@ -20,15 +20,17 @@ class QuoteScreenState extends State<QuoteScreen> {
 
   @override
   void initState() {
-    futureQuote = getQuote();
+    futureQuote = getNewQuoteAndSave();
     super.initState();
   }
 
-  void getNewQuote() async {
-    setState(() {
-      futureQuote = getQuote(category: textEditingController.value.text);
-    });
-    Provider.of<QuoteProvider>(context, listen: false).addQuote(await futureQuote);
+  Future<Quote> getNewQuoteAndSave() async {
+    Quote quote = await getQuote(category: textEditingController.value.text);
+    setState(() {});
+    if (context.mounted) {
+      Provider.of<QuoteProvider>(context, listen: false).addQuote(quote);
+    }
+    return quote;
   }
 
   @override
@@ -39,16 +41,17 @@ class QuoteScreenState extends State<QuoteScreen> {
             GestureDetector(
               onTap: () => Navigator.of(context).pushNamed('/history'),
               child: Padding(
-                padding: const EdgeInsets.only(right: 12.0, bottom: 12, top: 12),
+                padding:
+                    const EdgeInsets.only(right: 12.0, bottom: 12, top: 12),
                 child: Icon(Icons.history_edu_rounded),
               ),
             )
           ],
           title: Center(
-        child: Text('Quoty'),
-      )),
+            child: Text('Quoty'),
+          )),
       floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.refresh), onPressed: getNewQuote),
+          child: Icon(Icons.refresh), onPressed: getNewQuoteAndSave),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -103,7 +106,7 @@ class QuoteScreenState extends State<QuoteScreen> {
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   suffixIcon: GestureDetector(
-                      onTap: getNewQuote, child: Icon(Icons.search)),
+                      onTap: getNewQuoteAndSave, child: Icon(Icons.search)),
                   // Use OutlineInputBorder for a box-like appearance
                   hintText:
                       'Enter a category', // Optional: Adds a label above the TextField
