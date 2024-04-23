@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:quoty/controllers/persistence/persistence_controller.dart';
 import 'package:quoty/controllers/persistence/sharedpreferences_controller.dart';
+import 'package:quoty/controllers/persistence/sqlite_controller.dart';
 
 import '../entities/quote.dart';
 
 class QuoteProvider extends ChangeNotifier implements PersistenceController {
-  PersistenceController persistence = SharedPreferencesController();
+  PersistenceController persistence = SqliteController();
 
   @override
   Future<void> init() async {
-    // noop
+    persistence.init();
   }
 
+  @override
   Future<void> addQuote(Quote quote) async {
-    //_quotes.add(quote);
+    await init();
     persistence.addQuote(quote);
     notifyListeners();
   }
 
+  @override
   Future<List<Quote>> getAllQuotes() async {
+    await init();
     List<Quote> quotes = await persistence.getAllQuotes();
     quotes.sort();
     return quotes;

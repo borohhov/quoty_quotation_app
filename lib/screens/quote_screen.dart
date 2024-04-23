@@ -25,10 +25,13 @@ class QuoteScreenState extends State<QuoteScreen> {
   }
 
   Future<Quote> getNewQuoteAndSave() async {
-    Quote quote = await getQuote(category: textEditingController.value.text);
-    setState(() {});
+    Future<Quote> quote = getQuote(category: textEditingController.value.text);
+    setState(() {
+      futureQuote = quote;
+    });
+
     if (context.mounted) {
-      Provider.of<QuoteProvider>(context, listen: false).addQuote(quote);
+      Provider.of<QuoteProvider>(context, listen: false).addQuote(await quote);
     }
     return quote;
   }

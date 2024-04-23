@@ -9,7 +9,6 @@ class SharedPreferencesController implements PersistenceController {
   static const String _quotesKey = 'quotes';
   @override
   Future<void> addQuote(Quote quote) async {
-    await init();
     final List<Quote> quotes = await getAllQuotes(); // Retrieve current list of quotes
     quotes.add(quote); // Add new quote to list
     // Convert all quotes to JSON and store them
@@ -19,7 +18,6 @@ class SharedPreferencesController implements PersistenceController {
 
   @override
   Future<List<Quote>> getAllQuotes() async {
-    await init();
     List<String> jsonQuotes = prefs.getStringList(_quotesKey) ?? [];
     return jsonQuotes.map((q) => Quote.fromMap(json.decode(q))).toList();
   }
