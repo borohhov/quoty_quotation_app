@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quoty/controllers/persistence/firestore_controller.dart';
 import 'package:quoty/controllers/persistence/persistence_controller.dart';
 import 'package:quoty/controllers/persistence/sharedpreferences_controller.dart';
 import 'package:quoty/controllers/persistence/sqlite_controller.dart';
@@ -6,7 +7,7 @@ import 'package:quoty/controllers/persistence/sqlite_controller.dart';
 import '../entities/quote.dart';
 
 class QuoteProvider extends ChangeNotifier implements PersistenceController {
-  PersistenceController persistence = SqliteController();
+  PersistenceController persistence = FirestoreController();
 
   @override
   Future<void> init() async {
