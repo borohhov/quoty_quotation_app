@@ -8,11 +8,13 @@ class FirestoreController implements PersistenceController {
 
   @override
   Future<void> addQuote(Quote quote) async {
+    await init();
     db.collection("quotes").add(quote.toMap());
   }
 
   @override
   Future<List<Quote>> getAllQuotes() async {
+    await init();
     QuerySnapshot<Map<String, dynamic>> snapshot =
         await db.collection("quotes").get();
     return snapshot.docs.map((doc) => Quote.fromMap(doc.data())).toList();

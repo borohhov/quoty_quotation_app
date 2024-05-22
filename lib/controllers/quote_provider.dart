@@ -28,6 +28,4 @@ class QuoteProvider extends ChangeNotifier implements PersistenceController {
     quotes.sort();
     return quotes;
   }
-
-
 }

@@ -31,17 +31,15 @@ List<Quote> quotes = [
       "Don't judge each day by the harvest you reap but by the seeds that you plant.",
       "Robert Louis Stevenson")
 ];
-const String API_NINJAS_KEY = 'TSSofOsiVTK2O9ND6r2SyQ==KpSkV5JkLRwt2jiu';
 
 Future<Quote> getQuote({String category = ''}) async {
-  String uri = 'https://api.api-ninjas.com/v1/quotes';
+  String uri = 'https://quote-nry6mroyba-uc.a.run.app';
   if(category.isNotEmpty) {
     uri = '$uri?category=$category';
   }
 
   http.Request request =
       http.Request('get', Uri.parse(uri));
-  request.headers.addAll({"X-Api-Key": "${API_NINJAS_KEY}"});
 
   http.StreamedResponse streamedResponse = await request.send();
   http.Response response = await http.Response.fromStream(streamedResponse);
@@ -49,7 +47,7 @@ Future<Quote> getQuote({String category = ''}) async {
   if (response.statusCode == 200) {
     Map<String, dynamic> json = Map();
     try {
-      json = jsonDecode(response.body)[0];
+      json = jsonDecode(response.body);
     }
     catch(e) {
       return Quote('Looks like the category is incorrect', 'Quoty');
